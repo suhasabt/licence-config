@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beeforce — Workforce Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+:root {
+  --bg: #F4F3F0;
+  --surface: #FFFFFF;
+  --surface-raised: #FFFFFF;
+  --border: rgba(0,0,0,0.08);
+  --border-strong: rgba(0,0,0,0.13);
+  --text-primary: #1A1A1A;
+  --text-secondary: #666460;
+  --text-tertiary: #999590;
+  --brand: #D4380D;
+  --brand-light: #FFF1ED;
+  --brand-mid: #FA8C16;
+  --green: #237804;
+  --green-bg: #F0FAE8;
+  --amber: #875500;
+  --amber-bg: #FFFBE6;
+  --red: #A8071A;
+  --red-bg: #FFF1F0;
+  --blue: #003A8C;
+  --blue-bg: #EBF5FF;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.04);
+  --font: 'DM Sans', sans-serif;
+  --mono: 'DM Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body { font-family: var(--font); background: var(--bg); color: var(--text-primary); min-height: 100vh; }
+
+/* ── TOPBAR ── */
+.topbar {
+  height: 52px;
+  background: #1A1A1A;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.topbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.3px;
+  white-space: nowrap;
+}
+.topbar-logo span { color: var(--brand); }
+.search-bar {
+  flex: 1;
+  max-width: 420px;
+  margin: 0 auto;
+  position: relative;
+}
+.search-bar input {
+  width: 100%;
+  background: rgba(255,255,255,0.09);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  padding: 7px 12px 7px 34px;
+  color: rgba(255,255,255,0.8);
+  font-family: var(--font);
+  font-size: 13px;
+  outline: none;
+  transition: .2s;
+}
+.search-bar input::placeholder { color: rgba(255,255,255,0.35); }
+.search-bar input:focus { background: rgba(255,255,255,0.13); border-color: rgba(255,255,255,0.25); }
+.search-bar .si { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.35); font-size: 15px; }
+.topbar-actions { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+.tb-btn {
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.08);
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.6);
+  font-size: 16px;
+  transition: .15s;
+  position: relative;
+}
+.tb-btn:hover { background: rgba(255,255,255,0.14); color: #fff; }
+.tb-btn .notif-dot {
+  position: absolute; top: 6px; right: 6px;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--brand); border: 1.5px solid #1A1A1A;
+}
+.user-chip {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 5px 10px 5px 6px;
+  cursor: pointer;
+  transition: .15s;
+}
+.user-chip:hover { background: rgba(255,255,255,0.14); }
+.user-avatar {
+  width: 24px; height: 24px; border-radius: 6px;
+  background: var(--brand);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 600; color: #fff;
+}
+.user-info { line-height: 1.2; }
+.user-name { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.85); }
+.user-role { font-size: 10px; color: rgba(255,255,255,0.4); }
+
+/* ── ROLE SWITCHER (demo) ── */
+.role-switcher-bar {
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  padding: 8px 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+.role-switcher-bar span { font-weight: 500; margin-right: 4px; color: var(--text-secondary); }
+.r-chip {
+  padding: 4px 10px;
+  border-radius: 100px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: .15s;
+}
+.r-chip:hover { background: var(--bg); }
+.r-chip.active { background: #1A1A1A; color: #fff; border-color: #1A1A1A; }
+
+/* ── LAYOUT ── */
+.page { display: grid; grid-template-columns: 1fr 340px; gap: 16px; padding: 16px 20px; max-width: 1200px; margin: 0 auto; align-items: start; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.card + .card { margin-top: 12px; }
+.card-head {
+  padding: 14px 16px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+.card-title { font-size: 13px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.1px; }
+.card-body { padding: 16px; }
+
+/* ── GREETING STRIP ── */
+.greeting-strip {
+  background: #1A1A1A;
+  border-radius: var(--radius-lg);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.greeting-left {}
+.greeting-hi { font-size: 13px; color: rgba(255,255,255,0.45); margin-bottom: 2px; }
+.greeting-name { font-size: 16px; font-weight: 600; color: #fff; letter-spacing: -0.3px; }
+.greeting-scope { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+.greeting-right { text-align: right; }
+.greeting-date { font-size: 11px; color: rgba(255,255,255,0.35); margin-bottom: 6px; }
+.needs-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--brand);
+  color: #fff;
+  padding: 5px 12px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: .15s;
+}
+.needs-pill:hover { background: #b82d08; }
+.needs-pill .count { font-weight: 600; font-size: 13px; }
+
+/* ── STAT GRID ── */
+.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.stat-box {
+  background: var(--bg);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: .15s;
+  border: 1px solid transparent;
+}
+.stat-box:hover { background: #ECEAE6; border-color: var(--border-strong); }
+.stat-lbl { font-size: 11px; color: var(--text-tertiary); margin-bottom: 7px; display: flex; align-items: center; gap: 5px; font-weight: 500; text-transform: uppercase; letter-spacing: .04em; }
+.stat-val { font-size: 24px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.5px; line-height: 1; margin-bottom: 5px; }
+.stat-sub { font-size: 11px; color: var(--text-secondary); margin-bottom: 4px; }
+.delta { font-size: 11px; font-weight: 500; display: flex; align-items: center; gap: 3px; }
+.delta.up-bad { color: var(--red); }
+.delta.up-good { color: var(--green); }
+.delta.neutral { color: var(--text-tertiary); }
+
+/* ── ATTENDANCE BAR ── */
+.att-section { margin-top: 14px; }
+.att-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.att-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--text-tertiary); }
+.att-pct { font-size: 13px; font-weight: 600; color: var(--green); }
+.att-bar-wrap { height: 8px; background: var(--border); border-radius: 100px; display: flex; overflow: hidden; margin-bottom: 10px; }
+.att-seg { height: 100%; transition: width .5s ease; }
+.att-legend { display: flex; gap: 16px; flex-wrap: wrap; }
+.leg { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-secondary); }
+.leg-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── SIGNAL CARDS ── */
+.signal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+.sig {
+  border-radius: var(--radius-md);
+  padding: 11px 12px;
+  cursor: pointer;
+  transition: .15s;
+  border: 1px solid transparent;
+}
+.sig:hover { filter: brightness(.97); }
+.sig-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+.sig-ico { width: 26px; height: 26px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+.sig-val { font-size: 18px; font-weight: 600; line-height: 1; }
+.sig-label { font-size: 12px; font-weight: 500; }
+.sig-sub { font-size: 11px; margin-top: 2px; }
+.sig.red { background: var(--red-bg); border-color: rgba(168,7,26,0.15); }
+.sig.red .sig-ico { background: rgba(168,7,26,0.12); color: var(--red); }
+.sig.red .sig-val, .sig.red .sig-label { color: var(--red); }
+.sig.red .sig-sub { color: #CF4455; }
+.sig.amber { background: var(--amber-bg); border-color: rgba(135,85,0,0.15); }
+.sig.amber .sig-ico { background: rgba(135,85,0,0.12); color: var(--amber); }
+.sig.amber .sig-val, .sig.amber .sig-label { color: var(--amber); }
+.sig.amber .sig-sub { color: #A36A00; }
+.sig.green { background: var(--green-bg); border-color: rgba(35,120,4,0.15); }
+.sig.green .sig-ico { background: rgba(35,120,4,0.12); color: var(--green); }
+.sig.green .sig-val, .sig.green .sig-label { color: var(--green); }
+.sig.green .sig-sub { color: #3A8C10; }
+.sig.blue { background: var(--blue-bg); border-color: rgba(0,58,140,0.15); }
+.sig.blue .sig-ico { background: rgba(0,58,140,0.12); color: var(--blue); }
+.sig.blue .sig-val, .sig.blue .sig-label { color: var(--blue); }
+.sig.blue .sig-sub { color: #1A5BA6; }
+
+/* ── ATTRITION ── */
+.atr-list { display: flex; flex-direction: column; gap: 8px; }
+.atr-row { display: flex; align-items: center; gap: 10px; }
+.atr-name { width: 90px; font-size: 12px; font-weight: 500; color: var(--text-secondary); flex-shrink: 0; }
+.atr-track { flex: 1; height: 5px; background: var(--border); border-radius: 100px; overflow: hidden; }
+.atr-fill { height: 100%; border-radius: 100px; transition: width .6s ease; }
+.atr-right { min-width: 60px; text-align: right; }
+.atr-pct { font-size: 13px; font-weight: 600; }
+.atr-delta { font-size: 10px; color: var(--text-tertiary); }
+
+/* ── COMPLIANCE STRIP ── */
+.compliance-strip {
+  background: linear-gradient(135deg, #1A1A1A 0%, #2D1A0A 100%);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: .15s;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.compliance-strip:hover { opacity: .9; }
+.cs-ico { width: 32px; height: 32px; border-radius: 8px; background: rgba(212,56,13,0.25); color: #FF7857; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+.cs-body { flex: 1; }
+.cs-title { font-size: 12px; font-weight: 600; color: #fff; margin-bottom: 2px; }
+.cs-sub { font-size: 11px; color: rgba(255,255,255,0.45); }
+.cs-arrow { color: rgba(255,255,255,0.3); font-size: 14px; }
+
+/* ── PAYROLL BANNER ── */
+.payroll-banner {
+  background: var(--amber-bg);
+  border: 1px solid rgba(135,85,0,0.2);
+  border-radius: var(--radius-md);
+  padding: 11px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.pb-ico { width: 30px; height: 30px; border-radius: 8px; background: rgba(135,85,0,0.12); color: var(--amber); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.pb-body { flex: 1; }
+.pb-title { font-size: 12px; font-weight: 600; color: var(--amber); }
+.pb-sub { font-size: 11px; color: #A36A00; margin-top: 1px; }
+.pb-btn { padding: 5px 12px; background: var(--amber); color: #fff; border: none; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: var(--font); transition: .15s; white-space: nowrap; }
+.pb-btn:hover { background: #6B4300; }
+
+/* ── RIGHT COL ── */
+.right-col { display: flex; flex-direction: column; gap: 12px; }
+
+/* ── NEEDS ATTENTION ── */
+.na-tabs { display: flex; gap: 0; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); overflow: hidden; margin-bottom: 12px; }
+.na-tab { flex: 1; padding: 7px 4px; font-size: 11px; font-weight: 500; text-align: center; border: none; background: var(--surface); cursor: pointer; color: var(--text-secondary); border-right: 1px solid var(--border-strong); font-family: var(--font); transition: .15s; line-height: 1.3; }
+.na-tab:last-child { border-right: none; }
+.na-tab.active { background: var(--bg); color: var(--text-primary); }
+.na-badge { display: inline-block; padding: 1px 6px; border-radius: 100px; font-size: 10px; font-weight: 600; margin-left: 3px; }
+.na-badge.red { background: var(--red-bg); color: var(--red); }
+.na-badge.amber { background: var(--amber-bg); color: var(--amber); }
+.na-badge.green { background: var(--green-bg); color: var(--green); }
+
+/* ── MODULE CHIPS ── */
+.mod-chips { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 12px; }
+.mod-chip { padding: 4px 10px; border-radius: 100px; font-size: 11px; font-weight: 500; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text-secondary); cursor: pointer; transition: .15s; }
+.mod-chip:hover { background: var(--bg); }
+.mod-chip.active { background: #1A1A1A; color: #fff; border-color: #1A1A1A; }
+
+/* ── BULK BAR ── */
+.bulk-bar {
+  background: #F0FAE8;
+  border: 1px solid rgba(35,120,4,0.2);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  animation: fadeIn .2s ease;
+}
+@keyframes fadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }
+.bulk-bar-txt { font-size: 12px; font-weight: 500; color: var(--green); }
+.bulk-actions { display: flex; gap: 6px; }
+.bulk-btn { padding: 4px 10px; border-radius: 5px; font-size: 11px; font-weight: 600; border: none; cursor: pointer; font-family: var(--font); transition: .15s; }
+.bulk-btn.approve { background: var(--green); color: #fff; }
+.bulk-btn.approve:hover { background: #196002; }
+.bulk-btn.reject { background: var(--red-bg); color: var(--red); border: 1px solid rgba(168,7,26,0.2); }
+.bulk-btn.reject:hover { background: rgba(168,7,26,0.15); }
+
+/* ── ACTION ITEMS ── */
+.action-scroll { max-height: 440px; overflow-y: auto; padding-right: 2px; }
+.action-scroll::-webkit-scrollbar { width: 3px; }
+.action-scroll::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+
+.action-group { margin-bottom: 14px; }
+.ag-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; padding: 0 2px; }
+.ag-label { font-size: 11px; font-weight: 600; color: var(--text-secondary); display: flex; align-items: center; gap: 5px; text-transform: uppercase; letter-spacing: .04em; }
+.ag-count { font-size: 11px; color: var(--text-tertiary); }
+
+.action-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  margin-bottom: 5px;
+  cursor: pointer;
+  transition: .12s;
+  position: relative;
+}
+.action-item:hover { background: var(--bg); border-color: var(--border-strong); }
+.ai-check {
+  width: 15px; height: 15px;
+  border-radius: 4px;
+  border: 1.5px solid var(--border-strong);
+  background: #fff;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  transition: .12s;
+  cursor: pointer;
+}
+.ai-check.checked { background: var(--green); border-color: var(--green); color: #fff; }
+.ai-urgency { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.ai-info { flex: 1; min-width: 0; }
+.ai-name { font-size: 12px; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ai-sub { font-size: 11px; color: var(--text-secondary); margin-top: 1px; }
+.ai-age { font-size: 10px; color: var(--text-tertiary); flex-shrink: 0; font-family: var(--mono); }
+.ai-age.overdue { color: var(--red); font-weight: 500; }
+.ai-btns { display: flex; gap: 4px; flex-shrink: 0; }
+.ai-btn { padding: 3px 8px; border-radius: 5px; font-size: 10px; font-weight: 600; border: none; cursor: pointer; font-family: var(--font); transition: .12s; }
+.ai-btn.ok { background: var(--green-bg); color: var(--green); border: 1px solid rgba(35,120,4,0.2); }
+.ai-btn.ok:hover { background: rgba(35,120,4,0.15); }
+.ai-btn.no { background: var(--red-bg); color: var(--red); border: 1px solid rgba(168,7,26,0.15); }
+.ai-btn.no:hover { background: rgba(168,7,26,0.15); }
+.ai-btn.view { background: var(--bg); color: var(--text-secondary); border: 1px solid var(--border-strong); }
+.ai-btn.view:hover { background: #e0deda; }
+
+.view-all-link { text-align: center; font-size: 11px; font-weight: 500; color: var(--blue); padding: 7px; border-radius: var(--radius-sm); border: 1px solid var(--border); margin-top: 3px; cursor: pointer; transition: .12s; }
+.view-all-link:hover { background: var(--blue-bg); }
+
+/* ── QUICK LINKS ── */
+.ql-list { display: flex; flex-direction: column; gap: 6px; }
+.ql-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: .12s;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+.ql-item:hover { background: #ECEAE6; border-color: var(--border-strong); }
+.ql-ico { width: 26px; height: 26px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+.ql-arrow { margin-left: auto; color: var(--text-tertiary); font-size: 14px; }
+
+/* ── ANNOUNCEMENTS ── */
+.ann-item { display: flex; gap: 10px; align-items: flex-start; }
+.ann-img { width: 44px; height: 44px; border-radius: var(--radius-sm); background: var(--bg); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 20px; overflow: hidden; }
+.ann-body {}
+.ann-title { font-size: 12px; font-weight: 600; color: var(--text-primary); margin-bottom: 3px; }
+.ann-text { font-size: 11px; color: var(--text-secondary); line-height: 1.5; }
+.ann-link { font-size: 11px; font-weight: 500; color: var(--brand); margin-top: 4px; display: block; cursor: pointer; }
+
+/* ── DIVIDER ── */
+.divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+
+/* ── SECTION LABEL ── */
+.sec-lbl { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--text-tertiary); margin-bottom: 8px; }
+
+/* ── JOINER LIST ── */
+.joiner-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--border); }
+.joiner-row:last-child { border-bottom: none; }
+.j-avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; flex-shrink: 0; }
+.j-name { font-size: 12px; font-weight: 500; color: var(--text-primary); }
+.j-role { font-size: 11px; color: var(--text-secondary); }
+.j-status { margin-left: auto; font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 100px; white-space: nowrap; }
+.j-status.today { background: var(--blue-bg); color: var(--blue); }
+.j-status.pending { background: var(--amber-bg); color: var(--amber); }
+.j-status.ready { background: var(--green-bg); color: var(--green); }
+
+/* ── HIDDEN util ── */
+.hidden { display: none !important; }
+
+/* ── APPROVED ANIMATION ── */
+@keyframes strikethrough { to { text-decoration: line-through; opacity: .5; } }
+.approved-item { animation: strikethrough .3s ease forwards; }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <i class="ti ti-hexagon-filled" style="color:var(--brand);font-size:20px"></i>
+    Bee<span>force</span>
+  </div>
+  <div class="search-bar">
+    <i class="ti ti-search si"></i>
+    <input type="text" placeholder="Search employees by name, ID, mobile…">
+  </div>
+  <div class="topbar-actions">
+    <button class="tb-btn" title="Help"><i class="ti ti-help-circle"></i></button>
+    <button class="tb-btn" title="Notifications"><i class="ti ti-bell"></i><span class="notif-dot"></span></button>
+    <button class="tb-btn" title="Apps"><i class="ti ti-apps"></i></button>
+    <div class="user-chip">
+      <div class="user-avatar">SK</div>
+      <div class="user-info">
+        <div class="user-name">Suresh Kumar</div>
+        <div class="user-role">Line Manager</div>
+      </div>
+      <i class="ti ti-chevron-down" style="color:rgba(255,255,255,.35);font-size:12px;margin-left:2px"></i>
+    </div>
+  </div>
+</div>
+
+<!-- DEMO ROLE SWITCHER -->
+<div class="role-switcher-bar">
+  <span>Preview as:</span>
+  <button class="r-chip active" onclick="setRole('lm',this)">Line Manager</button>
+  <button class="r-chip" onclick="setRole('hr',this)">Location HR</button>
+  <button class="r-chip" onclick="setRole('ph',this)">Plant Head</button>
+  <button class="r-chip" onclick="setRole('ch',this)">Central HRBP</button>
+</div>
+
+<!-- MAIN PAGE -->
+<div class="page">
+
+  <!-- LEFT COLUMN -->
+  <div class="left-col">
+
+    <!-- GREETING STRIP -->
+    <div class="greeting-strip">
+      <div class="greeting-left">
+        <div class="greeting-hi">Good morning,</div>
+        <div class="greeting-name" id="g-name">Suresh Kumar</div>
+        <div class="greeting-scope" id="g-scope">Line Manager · Poultry Processing · Plant Hosur</div>
+      </div>
+      <div class="greeting-right">
+        <div class="greeting-date">Thursday, 5 Jun 2026</div>
+        <div class="needs-pill" onclick="document.getElementById('na-section').scrollIntoView({behavior:'smooth'})">
+          <i class="ti ti-alert-circle" style="font-size:14px"></i>
+          <span class="count" id="g-needs-count">7</span> items need attention
+        </div>
+      </div>
+    </div>
+
+    <!-- PAYROLL BANNER (conditional) -->
+    <div class="payroll-banner" id="payroll-banner">
+      <div class="pb-ico"><i class="ti ti-file-invoice"></i></div>
+      <div class="pb-body">
+        <div class="pb-title">May payroll closes in 4 days</div>
+        <div class="pb-sub">Attendance cycle Apr 1–Apr 30 · <span id="pb-sub-text">3 plants yet to submit</span></div>
+      </div>
+      <button class="pb-btn">Review now</button>
+    </div>
+
+    <!-- WORKFORCE INSIGHTS CARD -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Workforce snapshot</div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <select id="loc-filter" style="font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--border-strong);background:var(--bg);color:var(--text-secondary);font-family:var(--font);" onchange="applyLocFilter()">
+            <option value="all">All locations</option>
+            <option value="hosur">Plant – Hosur</option>
+            <option value="nashik">Plant – Nashik</option>
+          </select>
+          <select style="font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--border-strong);background:var(--bg);color:var(--text-secondary);font-family:var(--font);">
+            <option>This month</option>
+            <option>Last month</option>
+            <option>This quarter</option>
+          </select>
+        </div>
+      </div>
+      <div class="card-body">
+
+        <!-- STAT GRID -->
+        <div class="stat-grid" id="stat-grid">
+          <!-- rendered by JS -->
+        </div>
+
+        <!-- ATTENDANCE BAR -->
+        <div class="att-section">
+          <div class="att-header">
+            <div class="att-title"><i class="ti ti-users" style="font-size:12px;vertical-align:-1px"></i> &nbsp;Attendance today</div>
+            <div class="att-pct" id="att-pct-lbl">84.2% present</div>
+          </div>
+          <div class="att-bar-wrap">
+            <div class="att-seg" id="seg-p" style="background:#237804"></div>
+            <div class="att-seg" id="seg-l" style="background:#FA8C16;opacity:.7"></div>
+            <div class="att-seg" id="seg-a" style="background:#A8071A;opacity:.7"></div>
+          </div>
+          <div class="att-legend">
+            <div class="leg"><div class="leg-dot" style="background:#237804"></div><span id="leg-p">32 present</span></div>
+            <div class="leg"><div class="leg-dot" style="background:#FA8C16"></div><span id="leg-l">4 on leave</span></div>
+            <div class="leg"><div class="leg-dot" style="background:#A8071A"></div><span id="leg-a">2 absent</span></div>
+          </div>
+        </div>
+
+        <!-- SIGNAL CARDS -->
+        <div class="signal-row" id="signal-row">
+          <!-- rendered by JS -->
+        </div>
+
+        <!-- ATTRITION (conditional) -->
+        <div id="atr-section" class="hidden">
+          <hr class="divider">
+          <div class="sec-lbl">Attrition this month</div>
+          <div class="atr-list" id="atr-list"></div>
+        </div>
+
+        <!-- COMPLIANCE STRIP -->
+        <div class="compliance-strip" id="compliance-strip">
+          <div class="cs-ico"><i class="ti ti-shield-exclamation"></i></div>
+          <div class="cs-body">
+            <div class="cs-title" id="cs-title">PF due in 8 days · ESIC due in 12 days</div>
+            <div class="cs-sub" id="cs-sub">3 statutory returns pending for this month</div>
+          </div>
+          <i class="ti ti-chevron-right cs-arrow"></i>
+        </div>
+
+        <!-- JOINERS (conditional) -->
+        <div id="joiners-section" class="hidden">
+          <hr class="divider">
+          <div class="sec-lbl">Joiners this week</div>
+          <div id="joiner-list"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ANNOUNCEMENTS -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Announcements</div>
+        <div style="display:flex;gap:6px">
+          <button style="width:24px;height:24px;border:1px solid var(--border-strong);border-radius:5px;background:var(--bg);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--text-secondary)"><i class="ti ti-chevron-left"></i></button>
+          <button style="width:24px;height:24px;border:1px solid var(--border-strong);border-radius:5px;background:var(--bg);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--text-secondary)"><i class="ti ti-chevron-right"></i></button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="ann-item">
+          <div class="ann-img" style="background:#FFF1ED;font-size:20px">📋</div>
+          <div class="ann-body">
+            <div class="ann-title">APRIL Payroll — action required</div>
+            <div class="ann-text">The April payroll should be processed starting from 1st May. For all BU, the attendance cycle must be considered from 1st April to 31st April.</div>
+            <span class="ann-link">Read more →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div class="right-col" id="na-section">
+
+    <!-- LOGO -->
+    <div class="card" style="padding:14px 16px;display:flex;align-items:center;justify-content:center;">
+      <div style="text-align:center">
+        <div style="font-size:18px;font-weight:700;color:var(--brand);letter-spacing:-0.5px">SUGUNA</div>
+        <div style="font-size:8px;font-weight:600;letter-spacing:.12em;color:var(--text-tertiary);text-transform:uppercase;margin-top:1px">FOODS · STRENGTH TO YOUR FAMILY</div>
+      </div>
+    </div>
+
+    <!-- NEEDS ATTENTION -->
+    <div class="card">
+      <div class="card-head">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="card-title">Needs attention</div>
+          <div style="background:var(--red-bg);color:var(--red);font-size:11px;font-weight:600;padding:2px 8px;border-radius:100px;" id="na-total-badge">147 pending</div>
+        </div>
+      </div>
+      <div class="card-body" style="padding:12px 14px">
+
+        <!-- TABS -->
+        <div class="na-tabs">
+          <button class="na-tab active" onclick="setTab(this,'overdue')">Overdue<span class="na-badge red" id="tab-overdue-ct">12</span></button>
+          <button class="na-tab" onclick="setTab(this,'today')">Due today<span class="na-badge amber" id="tab-today-ct">38</span></button>
+          <button class="na-tab" onclick="setTab(this,'upcoming')">Upcoming<span class="na-badge green" id="tab-upcoming-ct">97</span></button>
+        </div>
+
+        <!-- MODULE CHIPS -->
+        <div class="mod-chips">
+          <div class="mod-chip active" onclick="setMod(this,'all')">All</div>
+          <div class="mod-chip" onclick="setMod(this,'onboarding')">Onboarding</div>
+          <div class="mod-chip" onclick="setMod(this,'attendance')">Attendance</div>
+          <div class="mod-chip" onclick="setMod(this,'payroll')">Payroll</div>
+          <div class="mod-chip" onclick="setMod(this,'compliance')">Compliance</div>
+        </div>
+
+        <!-- BULK BAR -->
+        <div class="bulk-bar hidden" id="bulk-bar">
+          <div class="bulk-bar-txt" id="bulk-txt">0 selected</div>
+          <div class="bulk-actions">
+            <button class="bulk-btn approve" onclick="bulkApprove()"><i class="ti ti-check"></i> Approve all</button>
+            <button class="bulk-btn reject" onclick="bulkReject()">Reject</button>
+          </div>
+        </div>
+
+        <!-- ACTION LIST -->
+        <div class="action-scroll" id="action-list">
+          <!-- rendered by JS -->
+        </div>
+
+      </div>
+    </div>
+
+    <!-- QUICK LINKS -->
+    <div class="card">
+      <div class="card-head"><div class="card-title">Quick links</div></div>
+      <div class="card-body" style="padding:10px 12px">
+        <div class="ql-list">
+          <div class="ql-item"><div class="ql-ico" style="background:#EBF5FF;color:#003A8C"><i class="ti ti-user-search"></i></div>Employee search<i class="ti ti-chevron-right ql-arrow"></i></div>
+          <div class="ql-item"><div class="ql-ico" style="background:#F0FAE8;color:#237804"><i class="ti ti-clock-check"></i></div>Attendance register<i class="ti ti-chevron-right ql-arrow"></i></div>
+          <div class="ql-item"><div class="ql-ico" style="background:#FFFBE6;color:#875500"><i class="ti ti-file-invoice"></i></div>Payroll inputs<i class="ti ti-chevron-right ql-arrow"></i></div>
+          <div class="ql-item"><div class="ql-ico" style="background:#FFF1F0;color:#A8071A"><i class="ti ti-shield-check"></i></div>Compliance calendar<i class="ti ti-chevron-right ql-arrow"></i></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ── DATA ── */
+const ROLES = {
+  lm: {
+    name:'Suresh Kumar', scope:'Line Manager · Poultry Processing · Plant Hosur', initials:'SK',
+    needsCount:7,
+    showPayroll:false, showAttrition:false, showJoiners:true,
+    pbSubText:'',
+    stats:[
+      {ico:'ti-user-check',lbl:'Present today',val:'32',sub:'of 38 team members',delta:'',cls:''},
+      {ico:'ti-clock-exclamation',lbl:'Regularizations',val:'7',sub:'pending your approval',delta:'↑ +2 since yesterday',cls:'up-bad'},
+      {ico:'ti-door-enter',lbl:'Joining this week',val:'2',sub:'1 doc still pending',delta:'',cls:'neutral'},
+    ],
+    att:{total:38,present:32,leave:4,absent:2},
+    signals:[
+      {type:'red',ico:'ti-user-x',val:'2',label:'Absent – no reason',sub:'Ramesh K · Priya N'},
+      {type:'green',ico:'ti-shield-check',val:'Clear',label:'Compliance',sub:'All training up to date'},
+    ],
+    attrition:null,
+    joiners:[
+      {initials:'AK',color:'#D4380D',name:'Anita Kumar',role:'Packing operator',status:'today',lbl:'Joining today'},
+      {initials:'RV',color:'#237804',name:'Rajesh Verma',role:'Quality checker',status:'pending',lbl:'Docs pending'},
+    ],
+    complianceTitle:'PF due in 8 days · ESIC due in 12 days',
+    complianceSub:'3 statutory returns pending this month',
+    actions:[
+      {group:'Onboarding',count:'8 pending',color:'#A8071A',items:[
+        {id:'a1',urg:'red',name:'Anil Sharma · Offer letter',sub:'Plant Hosur · Joining Jun 6',age:'3d overdue',overdue:true,btns:['ok','no']},
+        {id:'a2',urg:'red',name:'Meena Pillai · Background check',sub:'HO Bangalore · Joining Jun 5',age:'1d overdue',overdue:true,btns:['ok','no']},
+      ],viewAll:null},
+      {group:'Attendance regularization',count:'97 pending',color:'#875500',items:[
+        {id:'b1',urg:'amber',name:'Suresh Babu · May 28 absent',sub:'Reason: site visit, no punch',age:'2d old',overdue:false,btns:['ok','no']},
+        {id:'b2',urg:'amber',name:'Kavitha Rao · May 29 half day',sub:'Reason: medical appointment',age:'1d old',overdue:false,btns:['ok','no']},
+        {id:'b3',urg:'amber',name:'Rajan M · May 30 absent',sub:'Reason: family emergency',age:'Today',overdue:false,btns:['ok','no']},
+      ],viewAll:'View all 97 regularization requests'},
+      {group:'Compliance',count:'2 critical',color:'#003A8C',items:[
+        {id:'c1',urg:'red',name:'POSH training — 38 overdue',sub:'Plant Nashik · Deadline Jun 1',age:'3d overdue',overdue:true,btns:['view']},
+      ],viewAll:null},
+      {group:'Payroll',count:'Closes Jun 8',color:'#237804',items:[
+        {id:'d1',urg:'blue',name:'Approve May payroll inputs',sub:'Attendance cycle Apr 1–Apr 30',age:'4d left',overdue:false,btns:['view']},
+      ],viewAll:null},
+    ],
+    naTotal:'147 pending', tabOverdue:12, tabToday:38, tabUpcoming:97,
+  },
+  hr: {
+    name:'Meena Pillai', scope:'Location HR · Plant Hosur · 1,840 employees', initials:'MP',
+    needsCount:23,
+    showPayroll:true, showAttrition:true, showJoiners:true,
+    pbSubText:'3 plants yet to submit',
+    stats:[
+      {ico:'ti-user-check',lbl:'Attendance rate',val:'87.6%',sub:'1,612 of 1,840 present',delta:'↓ −2.1% vs yesterday',cls:'up-bad'},
+      {ico:'ti-shield-exclamation',lbl:'Compliance breach',val:'38',sub:'overdue POSH training',delta:'↑ +5 this week',cls:'up-bad'},
+      {ico:'ti-trending-down',lbl:'Exits this month',val:'41',sub:'vs 29 last month',delta:'↑ +12 · watch trend',cls:'up-bad'},
+    ],
+    att:{total:1840,present:1612,leave:148,absent:80},
+    signals:[
+      {type:'red',ico:'ti-shield-exclamation',val:'38',label:'Compliance overdue',sub:'POSH · deadline passed'},
+      {type:'amber',ico:'ti-clock-exclamation',val:'97',label:'Regularizations',sub:'Oldest: 6 days pending'},
+      {type:'amber',ico:'ti-door-enter',val:'12',label:'Onboarding stuck',sub:'Docs / BGV not cleared'},
+      {type:'blue',ico:'ti-file-invoice',val:'4d',label:'Payroll closes',sub:'May inputs due Jun 8'},
+    ],
+    attrition:[
+      {name:'Resigned',pct:2.2,color:'#A8071A',delta:'↑ +0.4%'},
+      {name:'Terminated',pct:0.9,color:'#FA8C16',delta:'↓ −0.1%'},
+      {name:'Absconded',pct:0.4,color:'#666460',delta:'↑ +0.2%'},
+    ],
+    joiners:[
+      {initials:'AK',color:'#D4380D',name:'Anita Kumar',role:'Packing operator',status:'today',lbl:'Joining today'},
+      {initials:'RV',color:'#237804',name:'Rajesh Verma',role:'Quality checker',status:'pending',lbl:'Docs pending'},
+      {initials:'SP',color:'#003A8C',name:'Surekha Patil',role:'Line supervisor',status:'ready',lbl:'BGV cleared'},
+    ],
+    complianceTitle:'PF due in 8 days · ESIC due in 12 days · PT due in 5 days',
+    complianceSub:'3 statutory returns pending — act before deadline',
+    actions:[
+      {group:'Onboarding',count:'12 pending',color:'#A8071A',items:[
+        {id:'a1',urg:'red',name:'Anil Sharma · Offer letter',sub:'Plant Hosur · Joining Jun 6',age:'3d overdue',overdue:true,btns:['ok','no']},
+        {id:'a2',urg:'red',name:'Meena V · Background check',sub:'HO Bangalore · Joining Jun 5',age:'1d overdue',overdue:true,btns:['ok','no']},
+      ],viewAll:'View all 12 onboarding tasks'},
+      {group:'Attendance regularization',count:'97 pending',color:'#875500',items:[
+        {id:'b1',urg:'amber',name:'Suresh Babu · May 28 absent',sub:'Reason: site visit',age:'2d old',overdue:false,btns:['ok','no']},
+        {id:'b2',urg:'amber',name:'Kavitha Rao · May 29 half day',sub:'Reason: medical',age:'1d old',overdue:false,btns:['ok','no']},
+      ],viewAll:'View all 97 regularization requests'},
+    ],
+    naTotal:'147 pending', tabOverdue:23, tabToday:52, tabUpcoming:72,
+  },
+  ph: {
+    name:'Arvind Nair', scope:'Plant Head · Plant Hosur · 1,840 employees', initials:'AN',
+    needsCount:5,
+    showPayroll:false, showAttrition:true, showJoiners:false,
+    pbSubText:'',
+    stats:[
+      {ico:'ti-user-check',lbl:'Capacity today',val:'87.6%',sub:'1,612 of 1,840 on floor',delta:'↓ −2.1% — check critical roles',cls:'up-bad'},
+      {ico:'ti-trending-down',lbl:'Attrition this month',val:'2.7%',sub:'41 exits · target: ≤ 2%',delta:'↑ above target',cls:'up-bad'},
+      {ico:'ti-cash',lbl:'Overtime this month',val:'₹4.2L',sub:'vs ₹3.5L last month',delta:'↑ +20% — flag to finance',cls:'up-bad'},
+    ],
+    att:{total:1840,present:1612,leave:148,absent:80},
+    signals:[
+      {type:'red',ico:'ti-user-exclamation',val:'3',label:'Critical roles absent',sub:'2 supervisors · 1 safety officer'},
+      {type:'amber',ico:'ti-trending-up',val:'↑',label:'Attrition above target',sub:'2.7% vs 2.0% monthly goal'},
+    ],
+    attrition:[
+      {name:'Resigned',pct:2.2,color:'#A8071A',delta:'↑ +0.4%'},
+      {name:'Terminated',pct:0.9,color:'#FA8C16',delta:''},
+      {name:'Absconded',pct:0.4,color:'#666460',delta:'↑ +0.2%'},
+    ],
+    joiners:null,
+    complianceTitle:'POSH training: 38 employees overdue',
+    complianceSub:'Plant Nashik · Statutory deadline Jun 1 — 3 days past',
+    actions:[
+      {group:'Compliance',count:'2 critical',color:'#A8071A',items:[
+        {id:'c1',urg:'red',name:'POSH training — 38 overdue',sub:'Plant Nashik · 3 days past deadline',age:'3d overdue',overdue:true,btns:['view']},
+      ],viewAll:null},
+    ],
+    naTotal:'5 pending', tabOverdue:5, tabToday:0, tabUpcoming:0,
+  },
+  ch: {
+    name:'Priya Krishnan', scope:'Central HRBP · All plants · 22,342 employees', initials:'PK',
+    needsCount:14,
+    showPayroll:true, showAttrition:true, showJoiners:false,
+    pbSubText:'3 of 12 plants not yet submitted',
+    stats:[
+      {ico:'ti-building',lbl:'Plants at-risk',val:'2',sub:'Hosur: 87.6% · Nashik: 84.1%',delta:'Below 85% threshold',cls:'up-bad'},
+      {ico:'ti-shield-exclamation',lbl:'Compliance score',val:'94.1%',sub:'1,342 employees overdue',delta:'↓ −1.2% this week',cls:'up-bad'},
+      {ico:'ti-file-invoice',lbl:'Payroll pending',val:'3 plants',sub:'of 12 plants not submitted',delta:'Closes in 4 days',cls:'up-bad'},
+    ],
+    att:{total:22342,present:18640,leave:2252,absent:1450},
+    signals:[
+      {type:'red',ico:'ti-building',val:'2',label:'Plants below threshold',sub:'Attendance < 85% today'},
+      {type:'amber',ico:'ti-trending-up',val:'↑',label:'Org attrition rising',sub:'2.4% vs 2.0% target'},
+      {type:'blue',ico:'ti-file-invoice',val:'3',label:'Payroll plants pending',sub:'Due in 4 days'},
+      {type:'green',ico:'ti-shield-check',val:'94%',label:'Compliance score',sub:'↓ −1.2% vs last week'},
+    ],
+    attrition:[
+      {name:'Plant Hosur',pct:2.7,color:'#A8071A',delta:'↑ highest'},
+      {name:'Plant Nashik',pct:2.3,color:'#FA8C16',delta:'↑ +0.3%'},
+      {name:'Plant BLR',pct:1.6,color:'#237804',delta:'On target'},
+    ],
+    joiners:null,
+    complianceTitle:'PF: 3 plants overdue · PT: 2 states pending',
+    complianceSub:'Org-wide statutory compliance action required',
+    actions:[
+      {group:'Compliance',count:'4 critical',color:'#A8071A',items:[
+        {id:'c1',urg:'red',name:'POSH training — 38 overdue',sub:'Plant Nashik · Deadline Jun 1',age:'3d overdue',overdue:true,btns:['view']},
+        {id:'c2',urg:'red',name:'PF filing — Plant Hosur',sub:'Due Jun 1 · Not yet submitted',age:'4d overdue',overdue:true,btns:['view']},
+      ],viewAll:null},
+      {group:'Payroll approval',count:'3 plants',color:'#875500',items:[
+        {id:'d1',urg:'amber',name:'Plant Nashik · May payroll',sub:'Pending HOD sign-off',age:'2d old',overdue:false,btns:['ok','view']},
+        {id:'d2',urg:'amber',name:'Plant Hosur · May payroll',sub:'Attendance discrepancy flagged',age:'1d old',overdue:false,btns:['view']},
+      ],viewAll:null},
+    ],
+    naTotal:'14 pending', tabOverdue:8, tabToday:6, tabUpcoming:0,
+  }
+};
+
+let currentRole = 'lm';
+let selectedItems = new Set();
+let currentTab = 'overdue';
+let currentMod = 'all';
+
+function setRole(key, btn) {
+  document.querySelectorAll('.r-chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  currentRole = key;
+  selectedItems.clear();
+  renderAll();
+}
+
+function renderAll() {
+  const r = ROLES[currentRole];
+
+  // Greeting
+  document.getElementById('g-name').textContent = r.name;
+  document.getElementById('g-scope').textContent = r.scope;
+  document.getElementById('g-needs-count').textContent = r.needsCount;
+
+  // User chip
+  document.querySelector('.user-name').textContent = r.name;
+  document.querySelector('.user-role').textContent = r.scope.split(' · ')[0];
+  document.querySelector('.user-avatar').textContent = r.initials;
+
+  // Payroll banner
+  const pb = document.getElementById('payroll-banner');
+  if (r.showPayroll) {
+    pb.classList.remove('hidden');
+    document.getElementById('pb-sub-text').textContent = r.pbSubText;
+  } else {
+    pb.classList.add('hidden');
+  }
+
+  // Stats
+  const sg = document.getElementById('stat-grid');
+  sg.innerHTML = r.stats.map(s => `
+    <div class="stat-box">
+      <div class="stat-lbl"><i class="ti ${s.ico}" style="font-size:12px;vertical-align:-1px"></i> ${s.lbl}</div>
+      <div class="stat-val">${s.val}</div>
+      <div class="stat-sub">${s.sub}</div>
+      ${s.delta ? `<div class="delta ${s.cls}">${s.delta}</div>` : ''}
+    </div>
+  `).join('');
+
+  // Attendance bar
+  const {total,present,leave,absent} = r.att;
+  const pP = (present/total*100).toFixed(1);
+  const lP = (leave/total*100).toFixed(1);
+  const aP = (absent/total*100).toFixed(1);
+  document.getElementById('seg-p').style.width = pP+'%';
+  document.getElementById('seg-l').style.width = lP+'%';
+  document.getElementById('seg-a').style.width = aP+'%';
+  document.getElementById('att-pct-lbl').textContent = pP+'% present';
+  document.getElementById('leg-p').textContent = present.toLocaleString()+' present';
+  document.getElementById('leg-l').textContent = leave.toLocaleString()+' on leave';
+  document.getElementById('leg-a').textContent = absent.toLocaleString()+' absent';
+
+  // Signals
+  const sr = document.getElementById('signal-row');
+  sr.style.gridTemplateColumns = r.signals.length <= 2 ? '1fr 1fr' : '1fr 1fr';
+  sr.innerHTML = r.signals.map(s => `
+    <div class="sig ${s.type}">
+      <div class="sig-top">
+        <div class="sig-ico"><i class="ti ${s.ico}"></i></div>
+        <div class="sig-val">${s.val}</div>
+      </div>
+      <div class="sig-label">${s.label}</div>
+      <div class="sig-sub">${s.sub}</div>
+    </div>
+  `).join('');
+
+  // Attrition
+  const atrSec = document.getElementById('atr-section');
+  if (r.showAttrition && r.attrition) {
+    atrSec.classList.remove('hidden');
+    document.getElementById('atr-list').innerHTML = r.attrition.map(a => `
+      <div class="atr-row">
+        <div class="atr-name">${a.name}</div>
+        <div class="atr-track"><div class="atr-fill" style="width:${Math.min(a.pct/4*100,100)}%;background:${a.color}"></div></div>
+        <div class="atr-right">
+          <div class="atr-pct" style="color:${a.color}">${a.pct}%</div>
+          <div class="atr-delta">${a.delta}</div>
+        </div>
+      </div>
+    `).join('');
+  } else atrSec.classList.add('hidden');
+
+  // Compliance strip
+  document.getElementById('cs-title').textContent = r.complianceTitle;
+  document.getElementById('cs-sub').textContent = r.complianceSub;
+
+  // Joiners
+  const jSec = document.getElementById('joiners-section');
+  if (r.showJoiners && r.joiners && r.joiners.length) {
+    jSec.classList.remove('hidden');
+    document.getElementById('joiner-list').innerHTML = r.joiners.map(j => `
+      <div class="joiner-row">
+        <div class="j-avatar" style="background:${j.color}22;color:${j.color}">${j.initials}</div>
+        <div>
+          <div class="j-name">${j.name}</div>
+          <div class="j-role">${j.role}</div>
+        </div>
+        <div class="j-status ${j.status}">${j.lbl}</div>
+      </div>
+    `).join('');
+  } else jSec.classList.add('hidden');
+
+  // NA panel
+  document.getElementById('na-total-badge').textContent = r.naTotal;
+  document.getElementById('tab-overdue-ct').textContent = r.tabOverdue;
+  document.getElementById('tab-today-ct').textContent = r.tabToday;
+  document.getElementById('tab-upcoming-ct').textContent = r.tabUpcoming;
+
+  renderActions();
+}
+
+function renderActions() {
+  const r = ROLES[currentRole];
+  const list = document.getElementById('action-list');
+  list.innerHTML = '';
+  r.actions.forEach(grp => {
+    const el = document.createElement('div');
+    el.className = 'action-group';
+    el.innerHTML = `
+      <div class="ag-head">
+        <div class="ag-label" style="color:${grp.color}">${grp.group}</div>
+        <div class="ag-count">${grp.count}</div>
+      </div>
+    `;
+    grp.items.forEach(item => {
+      const btns = item.btns.map(b => {
+        if (b==='ok') return `<button class="ai-btn ok" onclick="approveItem('${item.id}',event)"><i class="ti ti-check"></i> Approve</button>`;
+        if (b==='no') return `<button class="ai-btn no" onclick="rejectItem('${item.id}',event)">Reject</button>`;
+        if (b==='view') return `<button class="ai-btn view" onclick="event.stopPropagation()">View ↗</button>`;
+        return '';
+      }).join('');
+      const urgColors = {red:'#A8071A',amber:'#875500',blue:'#003A8C'};
+      const row = document.createElement('div');
+      row.className = 'action-item';
+      row.id = 'item-'+item.id;
+      row.onclick = () => toggleCheck(item.id, row);
+      row.innerHTML = `
+        <div class="ai-check" id="chk-${item.id}" data-checked="false"></div>
+        <div class="ai-urgency" style="background:${urgColors[item.urg]||'#999'}"></div>
+        <div class="ai-info">
+          <div class="ai-name">${item.name}</div>
+          <div class="ai-sub">${item.sub}</div>
+        </div>
+        <div class="ai-age ${item.overdue?'overdue':''}">${item.age}</div>
+        <div class="ai-btns">${btns}</div>
+      `;
+      el.appendChild(row);
+    });
+    if (grp.viewAll) {
+      const va = document.createElement('div');
+      va.className = 'view-all-link';
+      va.textContent = grp.viewAll + ' ↗';
+      el.appendChild(va);
+    }
+    list.appendChild(el);
+  });
+}
+
+function toggleCheck(id, row) {
+  const chk = document.getElementById('chk-'+id);
+  const checked = chk.getAttribute('data-checked')==='true';
+  chk.setAttribute('data-checked', !checked);
+  chk.classList.toggle('checked', !checked);
+  chk.textContent = !checked ? '✓' : '';
+  if (!checked) selectedItems.add(id);
+  else selectedItems.delete(id);
+  updateBulkBar();
+}
+
+function updateBulkBar() {
+  const bar = document.getElementById('bulk-bar');
+  const txt = document.getElementById('bulk-txt');
+  if (selectedItems.size > 0) {
+    bar.classList.remove('hidden');
+    txt.textContent = selectedItems.size + ' selected';
+  } else {
+    bar.classList.add('hidden');
+  }
+}
+
+function approveItem(id, e) {
+  e.stopPropagation();
+  const row = document.getElementById('item-'+id);
+  row.style.transition = '.3s';
+  row.style.opacity = '0.4';
+  setTimeout(()=>row.remove(), 400);
+}
+
+function rejectItem(id, e) {
+  e.stopPropagation();
+  const row = document.getElementById('item-'+id);
+  row.style.background = '#FFF1F0';
+  setTimeout(()=>{ row.style.transition='.3s'; row.style.opacity='0'; }, 100);
+  setTimeout(()=>row.remove(), 500);
+}
+
+function bulkApprove() {
+  selectedItems.forEach(id => {
+    const row = document.getElementById('item-'+id);
+    if (row) { row.style.transition='.3s'; row.style.opacity='0.3'; setTimeout(()=>row.remove(),400); }
+  });
+  selectedItems.clear();
+  document.getElementById('bulk-bar').classList.add('hidden');
+  document.querySelectorAll('.ai-check').forEach(c=>{ c.setAttribute('data-checked','false'); c.classList.remove('checked'); c.textContent=''; });
+}
+
+function bulkReject() {
+  selectedItems.clear();
+  document.getElementById('bulk-bar').classList.add('hidden');
+  document.querySelectorAll('.ai-check').forEach(c=>{ c.setAttribute('data-checked','false'); c.classList.remove('checked'); c.textContent=''; });
+}
+
+function setTab(btn, tab) {
+  document.querySelectorAll('.na-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  currentTab = tab;
+}
+
+function setMod(el, mod) {
+  document.querySelectorAll('.mod-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  currentMod = mod;
+}
+
+function applyLocFilter() {}
+
+// Init
+renderAll();
+</script>
+</body>
+</html>
